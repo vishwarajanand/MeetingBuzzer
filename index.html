@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
 	<title>Timer</title>
 	<style type="text/css">
@@ -64,28 +65,29 @@
 		}
 	</style>
 </head>
+
 <body>
 	<div id="app"></div>
 	<script type="text/javascript">
 		const FULL_DASH_ARRAY = 283;
-		const WARNING_THRESHOLD = 10;
-		const ALERT_THRESHOLD = 5;
+		const WARNING_THRESHOLD = .50;
+		const ALERT_THRESHOLD = .10;
 
 		const COLOR_CODES = {
 			info: {
-				color: "green"
+				color: "base-timer__path-remaining green"
 			},
 			warning: {
-				color: "orange",
+				color: "base-timer__path-remaining orange",
 				threshold: WARNING_THRESHOLD
 			},
 			alert: {
-				color: "red",
+				color: "base-timer__path-remaining red",
 				threshold: ALERT_THRESHOLD
 			}
 		};
 
-		const TIME_LIMIT = 20;
+		const TIME_LIMIT = 10;
 		let timePassed = 0;
 		let timeLeft = TIME_LIMIT;
 		let timerInterval = null;
@@ -111,22 +113,27 @@
 		</svg>
 		<span id="base-timer-label" class="base-timer__label">${formatTime(
 			timeLeft
-			)}</span>
+		)}</span>
 		</div>
 		`;
 
-		startTimer();
+		onTimesUp();
 
 		function startVibrationPattern() {
 			// Values at even indices (0, 2, 4, ...) specify vibrations, while the odd
 			// indices specify pauses.
 			// Vibrate for 500ms 6 times, pausing for 250ms in between each one.
-			navigator.vibrate([500, 250, 500, 250, 500, 250, 500, 250, 500, 250, 500]);
+			console.log("Vibrate!");
 		}
 
 		function onTimesUp() {
 			startVibrationPattern();
+			timePassed = 0;
 			clearInterval(timerInterval);
+			startTimer();
+			document
+				.getElementById("base-timer-path-remaining")
+				.classList = (COLOR_CODES.info.color);
 		}
 
 		function startTimer() {
@@ -135,7 +142,7 @@
 				timeLeft = TIME_LIMIT - timePassed;
 				document.getElementById("base-timer-label").innerHTML = formatTime(
 					timeLeft
-					);
+				);
 				setCircleDasharray();
 				setRemainingPathColor(timeLeft);
 
@@ -158,20 +165,14 @@
 
 		function setRemainingPathColor(timeLeft) {
 			const { alert, warning, info } = COLOR_CODES;
-			if (timeLeft <= alert.threshold) {
+			if (calculateTimeFraction() <= alert.threshold) {
 				document
-				.getElementById("base-timer-path-remaining")
-				.classList.remove(warning.color);
+					.getElementById("base-timer-path-remaining")
+					.classList = (alert.color);
+			} else if (calculateTimeFraction() <= warning.threshold) {
 				document
-				.getElementById("base-timer-path-remaining")
-				.classList.add(alert.color);
-			} else if (timeLeft <= warning.threshold) {
-				document
-				.getElementById("base-timer-path-remaining")
-				.classList.remove(info.color);
-				document
-				.getElementById("base-timer-path-remaining")
-				.classList.add(warning.color);
+					.getElementById("base-timer-path-remaining")
+					.classList = (warning.color);
 			}
 		}
 
@@ -183,11 +184,12 @@
 		function setCircleDasharray() {
 			const circleDasharray = `${(
 				calculateTimeFraction() * FULL_DASH_ARRAY
-				).toFixed(0)} 283`;
+			).toFixed(0)} 283`;
 			document
-			.getElementById("base-timer-path-remaining")
-			.setAttribute("stroke-dasharray", circleDasharray);
+				.getElementById("base-timer-path-remaining")
+				.setAttribute("stroke-dasharray", circleDasharray);
 		}
 	</script>
 </body>
+
 </html>
