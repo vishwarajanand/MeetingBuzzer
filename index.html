@@ -11,6 +11,32 @@
 			place-items: center;
 		}
 
+		.button {
+			background-color: #4CAF50;
+			/* Green */
+			border: none;
+			color: white;
+			padding: 32px 64px;
+			text-align: center;
+			text-decoration: none;
+			display: inline-block;
+			font-size: 32px;
+			margin: 6px 4px;
+			transition-duration: 0.4s;
+			cursor: pointer;
+		}
+
+		.btn-start {
+			background-color: white;
+			color: black;
+			border: 2px solid #4CAF50;
+		}
+
+		.btn-start:hover {
+			background-color: #4CAF50;
+			color: white;
+		}
+
 		.base-timer {
 			position: relative;
 			width: 300px;
@@ -67,6 +93,11 @@
 </head>
 
 <body>
+	<div>
+		<input type="range" id="input-seconds" name="vol" min="5" max="200" onclick="updateTime()" value="10" />
+		<button class="button btn-start" id="btn-start" onclick="onTimesUp()">Start 5 Sec timer</button>
+
+	</div>
 	<div id="app"></div>
 	<script type="text/javascript">
 		const FULL_DASH_ARRAY = 283;
@@ -87,7 +118,7 @@
 			}
 		};
 
-		const TIME_LIMIT = 10;
+		let TIME_LIMIT = 5;
 		let timePassed = 0;
 		let timeLeft = TIME_LIMIT;
 		let timerInterval = null;
@@ -117,23 +148,34 @@
 		</div>
 		`;
 
-		onTimesUp();
+		// onTimesUp();
 
 		function startVibrationPattern() {
 			// Values at even indices (0, 2, 4, ...) specify vibrations, while the odd
 			// indices specify pauses.
 			// Vibrate for 500ms 6 times, pausing for 250ms in between each one.
 			console.log("Vibrate!");
+			navigator.vibrate([500, 250, 500, 250, 500, 250, 500, 250, 500, 250, 500]);
 		}
 
 		function onTimesUp() {
 			startVibrationPattern();
-			timePassed = 0;
-			clearInterval(timerInterval);
+			resetTimer();
 			startTimer();
-			document
-				.getElementById("base-timer-path-remaining")
-				.classList = (COLOR_CODES.info.color);
+		}
+
+		function updateTime() {
+			TIME_LIMIT = document.getElementById("input-seconds").value;
+			document.getElementById("btn-start").innerText = `Reset ${TIME_LIMIT} Sec timer`;
+			resetTimer();
+		}
+
+		function resetTimer() {
+			clearInterval(timerInterval);
+			timePassed = 0;
+			timeLeft = TIME_LIMIT;
+			setCircleDasharray();
+			setRemainingPathColor(TIME_LIMIT - 1);
 		}
 
 		function startTimer() {
@@ -173,6 +215,10 @@
 				document
 					.getElementById("base-timer-path-remaining")
 					.classList = (warning.color);
+			} else {
+				document
+					.getElementById("base-timer-path-remaining")
+					.classList = (info.color);
 			}
 		}
 
