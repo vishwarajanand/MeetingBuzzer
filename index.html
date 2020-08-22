@@ -155,7 +155,12 @@
 			// indices specify pauses.
 			// Vibrate for 500ms 6 times, pausing for 250ms in between each one.
 			console.log("Vibrate!");
-			navigator.vibrate([500, 250, 500, 250, 500, 250, 500, 250, 500, 250, 500]);
+			if (navigator.vibrate) {
+				console.log(" !! @@ ~~ Vibrate is called ~~ @@ !! ");
+				navigator.vibrate([500, 250, 500, 250, 500, 250, 500, 250, 500, 250, 500]);
+			} else {
+				console.log(" !! @@ ~~ Vibrate not supported in browser ~~ @@ !! ");
+			}
 		}
 
 		function onTimesUp() {
